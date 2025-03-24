@@ -13,8 +13,10 @@ const app = express();
 app.use(express.json());
 app.use("/uploads", express.static("./" + "uploads"));
 
-app.use(cors());
-
+app.use(cors({
+    origin: '*',
+  }));
+  
 sequelize.sync({ force: false })
     .then(() => console.log("✅ Database synchronized successfully!"))
     .catch(err => console.error("❌ Error synchronizing database:", err.message));
@@ -26,6 +28,6 @@ app.use("/", hall);
 app.use("/", adress);
 app.use("/", anothe);
 
-app.listen(3000 , () => {
-    console.log(`🚀 Server running on http://localhost:3000`);
+app.listen(4000 , () => {
+    console.log(`🚀 Server running on http://localhost:4000`);
 });
