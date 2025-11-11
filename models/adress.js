@@ -26,6 +26,11 @@ const BookingAdress = sequelize.define("bookingAdress", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'pending'
+    }
 }, {
     timestamps: true,
 });

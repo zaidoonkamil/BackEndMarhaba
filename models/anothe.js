@@ -26,6 +26,11 @@ const BookingAnothe = sequelize.define("bookingAnothe", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    status: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'pending'
+    }
 }, {
     timestamps: true,
 });
