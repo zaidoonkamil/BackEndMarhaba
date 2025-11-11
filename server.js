@@ -25,8 +25,8 @@ sequelize.sync({ force: false })
 
 
 app.use("/", adsRoutes);
-/*
 app.use("/", farm);
+/*
 app.use("/", hall);
 app.use("/", adress);
 app.use("/", anothe);
