@@ -15,7 +15,6 @@ router.get("/pending-all",async (req, res) => {
         Farm.findAll({ where: { status: 'pending' } }),
       ]);
   
-      // دمجهم في Array وحدة
       const pendingItems = [
         ...pendingAdresses.map(item => ({ ...item.dataValues, type: 'adress' })),
         ...pendingAnothers.map(item => ({ ...item.dataValues, type: 'another' })),
