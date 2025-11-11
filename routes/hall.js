@@ -1,23 +1,12 @@
 const express = require("express");
 const BookingHall = require("../models/hall");
 const upload = require("../middlewares/uploads");
-const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-const authenticateToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if (!token) return res.status(401).json({ error: "Access denied, no token provided" });
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ error: "Invalid token" });
-        req.user = user;
-        next();
-    });
-};
-
-router.post("/hall",upload.array("images",5) , authenticateToken , async (req, res) => {
+router.post("/hall",upload.array("images",5) , async (req, res) => {
     try {
-        const { title, price, desc, province, phone } = req.body;
+        const { title, price, desc, province, phone, status } = req.body;
 
         if (!title || !price || !desc || !province || !phone) {
             return res.status(400).json({ error: "جميع الحقول مطلوبة" });
@@ -25,8 +14,13 @@ router.post("/hall",upload.array("images",5) , authenticateToken , async (req, r
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ error: "جميع الحقول مطلوبة" });
         }
+
+        const allowedStatuses = ["pending", "accepted", "rejected"];
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({ error: "قيمة الحالة غير صحيحة" });
+        }
+
         const images = req.files.map(file => file.filename);
-        const status = req.user.role === "admin" ? "accepted" : "pending";
         const bookingHall = await BookingHall.create({
             title,
             images,
@@ -44,17 +38,11 @@ router.post("/hall",upload.array("images",5) , authenticateToken , async (req, r
     }
 });
 
-router.patch("/hall/:id", upload.none(), authenticateToken, async (req, res) => {
+router.patch("/hall/:id", upload.none(),async (req, res) => {
     try {
-      // تحقق ان المستخدم ادمن
-      if (req.user.role !== "admin") {
-        return res.status(403).json({ error: "غير مصرح لك بتعديل الحالة" });
-      }
-  
       const { id } = req.params;
       const { status } = req.body;
   
-      // تحقق من القيم المسموحة
       const allowedStatuses = ["pending", "accepted", "rejected"];
       if (!allowedStatuses.includes(status)) {
         return res.status(400).json({ error: "الحالة غير صحيحة" });
@@ -65,7 +53,6 @@ router.patch("/hall/:id", upload.none(), authenticateToken, async (req, res) => 
         return res.status(404).json({ error: "لم يتم العثور على الحقل" });
       }
   
-      // تحديث الحالة
       BookingHall.status = status;
       await BookingHall.save();
   
@@ -79,7 +66,9 @@ router.patch("/hall/:id", upload.none(), authenticateToken, async (req, res) => 
 router.get("/hall", async (req, res) => {
     try {
         const { province } = req.query;
-        const whereClause = {};
+        const whereClause = {
+             status: "accepted"
+        };
 
         if (province) whereClause.province = province;
 
