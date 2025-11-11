@@ -66,11 +66,12 @@ router.patch("/farm/:id", upload.none(), async (req, res) => {
 router.get("/farm", async (req, res) => {
     try {
         const { province } = req.query;
-        const whereClause = {};
+        const whereClause = {
+            status: "accepted"
+        };
 
         if (province) whereClause.province = province;
 
-        // جلب السجلات بناءً على whereClause
         const bookingFarm = await BookingFarm.findAll({ where: whereClause });
         res.status(200).json(bookingFarm);
     } catch (error) {
