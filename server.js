@@ -7,6 +7,7 @@ const farm = require("./routes/farm");
 const hall = require("./routes/hall");
 const adress = require("./routes/adress");
 const anothe = require("./routes/anothe");
+const tourism = require("./routes/tourism");
 const user = require("./routes/user");
 const pending= require("./routes/pending_all");
 
@@ -26,6 +27,7 @@ app.use("/", farm);
 app.use("/", hall);
 app.use("/", adress);
 app.use("/", anothe);
+app.use("/", tourism);
 app.use("/", user);
 app.use("/", pending);
 

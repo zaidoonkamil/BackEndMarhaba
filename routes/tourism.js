@@ -1,9 +1,9 @@
 const express = require("express");
-const BookingFarm = require("../models/farm");
+const BookingTourism = require("../models/tourism");
 const upload = require("../middlewares/uploads");
 const router = express.Router();
 
-router.post("/farm",upload.array("images",5) , async (req, res) => {
+router.post("/tourism",upload.array("images",5) , async (req, res) => {
     try {
         const { title, price, desc, province, phone , status  } = req.body;
 
@@ -21,7 +21,7 @@ router.post("/farm",upload.array("images",5) , async (req, res) => {
 
         const images = req.files.map(file => file.filename);
 
-        const bookingFarm = await BookingFarm.create({
+        const bookingTourism = await BookingTourism.create({
             title,
             images,
             price,
@@ -31,14 +31,14 @@ router.post("/farm",upload.array("images",5) , async (req, res) => {
             status      
         });
 
-        res.status(201).json(bookingFarm);
+        res.status(201).json(bookingTourism);
     } catch (error) {
-        console.error("Error creating BookingFarm:", error);
+        console.error("Error creating BookingTourism:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 });
 
-router.patch("/farm/:id", upload.none(), async (req, res) => {
+router.patch("/tourism/:id", upload.none(), async (req, res) => {
     try {
       const { id } = req.params;
       const { status } = req.body;
@@ -48,22 +48,22 @@ router.patch("/farm/:id", upload.none(), async (req, res) => {
         return res.status(400).json({ error: "الحالة غير صحيحة" });
       }
   
-      const bookingFarm = await BookingFarm.findByPk(id);
-      if (!bookingFarm) {
+      const bookingTourism = await BookingTourism.findByPk(id);
+      if (!bookingTourism) {
         return res.status(404).json({ error: "لم يتم العثور على الحقل" });
       }
   
-      bookingFarm.status = status;
-      await bookingFarm.save();
+      bookingTourism.status = status;
+      await bookingTourism.save();
   
-      res.status(200).json({ message: "تم تحديث الحالة بنجاح", bookingFarm });
+      res.status(200).json({ message: "تم تحديث الحالة بنجاح", bookingTourism });
     } catch (error) {
-      console.error("Error updating farm status:", error);
+      console.error("Error updating Tourism status:", error);
       res.status(500).json({ error: "Internal server error." });
     }
 });
   
-router.get("/farm", async (req, res) => {
+router.get("/tourism", async (req, res) => {
     try {
         const { province } = req.query;
         const whereClause = {
@@ -72,25 +72,25 @@ router.get("/farm", async (req, res) => {
 
         if (province) whereClause.province = province;
 
-        const bookingFarm = await BookingFarm.findAll({ where: whereClause });
-        res.status(200).json(bookingFarm);
+        const bookingTourism = await BookingTourism.findAll({ where: whereClause });
+        res.status(200).json(bookingTourism);
     } catch (error) {
-        console.error("Error getting BookingFarm:", error);
+        console.error("Error getting BookingTourism:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 });
 
-router.delete("/farm/:id", async (req, res) => {  
+router.delete("/tourism/:id", async (req, res) => {  
     try {
         const { id } = req.params;
-        const bookingFarm = await BookingFarm.findByPk(id);
-        if (!bookingFarm) {
+        const bookingTourism = await BookingTourism.findByPk(id);
+        if (!bookingTourism) {
             return res.status(404).json({ error: "لم يتم العثور على هذا الحقل" });
         }
-        await bookingFarm.destroy();
+        await bookingTourism.destroy();
         res.status(204).end();
     } catch (error) {
-        console.error("Error deleting BookingFarm:", error);
+        console.error("Error deleting BookingTourism:", error);
         res.status(500).json({ error: "Internal server error." });
     }
 
