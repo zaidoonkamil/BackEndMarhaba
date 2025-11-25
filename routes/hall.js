@@ -38,30 +38,31 @@ router.post("/hall",upload.array("images",5) , async (req, res) => {
     }
 });
 
-router.patch("/hall/:id", upload.none(),async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { status } = req.body;
-  
-      const allowedStatuses = ["pending", "accepted", "rejected"];
-      if (!allowedStatuses.includes(status)) {
-        return res.status(400).json({ error: "الحالة غير صحيحة" });
-      }
-  
-      const BookingHall = await BookingHall.findByPk(id);
-      if (!BookingHall) {
-        return res.status(404).json({ error: "لم يتم العثور على الحقل" });
-      }
-  
-      BookingHall.status = status;
-      await BookingHall.save();
-  
-      res.status(200).json({ message: "تم تحديث الحالة بنجاح", BookingHall });
-    } catch (error) {
-      console.error("Error updating farm status:", error);
-      res.status(500).json({ error: "Internal server error." });
+router.patch("/hall/:id", upload.none(), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const allowedStatuses = ["pending", "accepted", "rejected"];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ error: "الحالة غير صحيحة" });
     }
-  });
+
+    const bookingHall = await BookingHall.findByPk(id);
+    if (!bookingHall) {
+      return res.status(404).json({ error: "لم يتم العثور على الحقل" });
+    }
+
+    bookingHall.status = status;
+    await bookingHall.save();
+
+    res.status(200).json({ message: "تم تحديث الحالة بنجاح", bookingHall });
+  } catch (error) {
+    console.error("Error updating hall status:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
   
 router.get("/hall", async (req, res) => {
     try {
