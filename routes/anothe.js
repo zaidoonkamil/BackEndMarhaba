@@ -38,7 +38,7 @@ router.post("/anothe",upload.array("images",5) , async (req, res) => {
     }
 });
 
-router.patch("/adress/:id", upload.none(), async (req, res) => {
+router.patch("/anothe/:id", upload.none(), async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -50,7 +50,7 @@ router.patch("/adress/:id", upload.none(), async (req, res) => {
 
     const bookingAnothe = await BookingAnothe.findByPk(id);
     if (!bookingAnothe) {
-      return res.status(404).json({ error: "لم يتم العثور على الطلب" });
+      return res.status(404).json({ error: "لم يتم العثور على الحقل" });
     }
 
     bookingAnothe.status = status;
@@ -59,7 +59,7 @@ router.patch("/adress/:id", upload.none(), async (req, res) => {
     res.status(200).json({ message: "تم تحديث الحالة بنجاح", bookingAnothe });
 
   } catch (error) {
-    console.error("Error updating adress status:", error);
+    console.error("Error updating anothe status:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 });
