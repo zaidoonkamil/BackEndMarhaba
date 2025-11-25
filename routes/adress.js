@@ -1,7 +1,6 @@
 const express = require("express");
 const BookingAdress = require("../models/adress");
 const upload = require("../middlewares/uploads");
-const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 router.post("/adress",upload.array("images",5) , async (req, res) => {
@@ -49,20 +48,21 @@ router.patch("/adress/:id", upload.none(), async (req, res) => {
         return res.status(400).json({ error: "الحالة غير صحيحة" });
       }
   
-      const BookingAnothe = await BookingAnothe.findByPk(id);
-      if (!BookingAnothe) {
+      const bookingAdress = await BookingAdress.findByPk(id);
+      if (!bookingAdress) {
         return res.status(404).json({ error: "لم يتم العثور على الحقل" });
       }
   
-      BookingAnothe.status = status;
-      await BookingAnothe.save();
+      bookingAdress.status = status;
+      await bookingAdress.save();
   
-      res.status(200).json({ message: "تم تحديث الحالة بنجاح", BookingAnothe });
+      res.status(200).json({ message: "تم تحديث الحالة بنجاح", bookingAdress });
     } catch (error) {
-      console.error("Error updating farm status:", error);
+      console.error("Error updating adress status:", error);
       res.status(500).json({ error: "Internal server error." });
     }
 });
+
 
 router.get("/adress", async (req, res) => {
     try {
