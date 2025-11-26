@@ -1,6 +1,11 @@
 const express = require("express");
 const Booking = require("../models/booking");
 const upload = require("multer")();
+const BookingFarm = require("../models/farm");
+const BookingAdress = require("../models/adress");
+const BookingHall = require("../models/hall");
+const BookingAnothe = require("../models/anothe");
+const BookingTourism = require("../models/tourism");
 const router = express.Router();
 
 router.post("/booking", upload.none(), async (req, res) => {
@@ -38,29 +43,58 @@ router.get("/user-bookings/:userId", async (req, res) => {
     try {
         const { userId } = req.params;
 
-        const farm = await BookingFarm.findAll({
+        const bookings = await Booking.findAll({
             where: { userId },
+            order: [["createdAt", "DESC"]],
             limit: 30
         });
 
-        const adress = await BookingAdress.findAll({
-            where: { userId },
-            limit: 30
-        });
-        
-        let all = [...farm, ...adress];
+        let results = [];
 
-        all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        for (const b of bookings) {
+            let product = null;
 
-        const result = all.slice(0, 30);
+            switch (b.productType) {
+                case "farm":
+                    product = await BookingFarm.findByPk(b.productId);
+                    break;
 
-        res.status(200).json(result);
+                case "adress":
+                    product = await BookingAdress.findByPk(b.productId);
+                    break;
 
-    } catch (error) {
-        console.error("Error getting user bookings:", error);
-        res.status(500).json({ error: "Internal server error." });
+                case "hall":
+                    product = await BookingHall.findByPk(b.productId);
+                    break;
+
+                case "anothe":
+                    product = await BookingAnothe.findByPk(b.productId);
+                    break;
+
+                case "tourism":
+                    product = await BookingTourism.findByPk(b.productId);
+                    break;
+
+            }
+
+            results.push({
+                bookingId: b.id,
+                userId: b.userId,
+                ownerId: b.ownerId,
+                productType: b.productType,
+                createdAt: b.createdAt,
+                product: product 
+            });
+        }
+
+        res.status(200).json(results);
+
+    } catch (err) {
+        console.error("❌ Error get user bookings:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 
 module.exports = router;
