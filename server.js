@@ -10,6 +10,7 @@ const anothe = require("./routes/anothe");
 const tourism = require("./routes/tourism");
 const user = require("./routes/user");
 const pending= require("./routes/pending_all");
+const booking = require("./routes/booking");
 
 const app = express();
 app.use("/uploads", express.static("./" + "uploads"));
@@ -30,6 +31,7 @@ app.use("/", anothe);
 app.use("/", tourism);
 app.use("/", user);
 app.use("/", pending);
+app.use("/", booking);
 
 app.listen(1700 , () => {
     console.log(`🚀 Server running on http://localhost:1700`);
